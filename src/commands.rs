@@ -84,7 +84,7 @@ fn select_and_execute() {
         .arg("exec")
         .arg("zsh -ic")
         .arg(command.trim())
-        .spawn()
+        .output()
         .expect("Failed to execute i3-msg");
 }
 
