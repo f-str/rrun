@@ -1,0 +1,12 @@
+[package]
+name = "rrun"
+description = "A Rust runner for commands"
+authors = ["Florian Straubinger <github@f-str.de>"]
+repository = "https://github.com/f-str/rrun"
+readme = "README.md"
+license-file = "LICENSE"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive"] }
