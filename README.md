@@ -5,7 +5,7 @@
 # RRun
 
 `rrun` is a resource-friendly application launcher for the [i3wm](https://i3wm.org/), written in pure Rust. 
-It provides a simple way to start applications from directly from the command line.
+It provides a simple way to start applications directly from the command line.
 
 ## Installation
 
