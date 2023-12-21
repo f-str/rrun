@@ -1,6 +1,6 @@
+mod cli;
 mod persistent;
 mod util;
-mod cli;
 
 fn main() {
     if !util::check_if_program_is_installed("fzf") {
