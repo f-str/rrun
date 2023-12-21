@@ -1,7 +1,6 @@
 <p align="center">
-  <img src="https://github.com/f-str/rrun/blob/master/img/rrun_icon.png?raw=true" alt="RRun icon"/>
+  <img src="https://raw.githubusercontent.com/f-str/rrun/main/img/rrun_icon.png" alt="RRun icon"/>
 </p>
-
 
 # RRun
 
