@@ -36,7 +36,7 @@ fn list() {
 
 fn generate() {
     println!("Generating...");
-    let compgen = Command::new("zsh")
+    let compgen = Command::new(_get_shell())
         .arg("-ic")
         .arg("compgen -c -a")
         .stdout(Stdio::piped())
@@ -82,7 +82,7 @@ fn select_and_execute() {
 
     Command::new("i3-msg")
         .arg("exec")
-        .arg("zsh -ic")
+        .arg(_get_shell() + " -ic")
         .arg(command.trim())
         .output()
         .expect("Failed to execute i3-msg");
@@ -93,4 +93,10 @@ fn _get_content() -> String {
         generate();
         read_from_persistent().unwrap()
     })
+}
+fn _get_shell() -> String {
+    match std::env::var_os("SHELL") {
+        Some(val) => val.into_string().unwrap(),
+        None => panic!("SHELL is not set"),
+    }
 }
