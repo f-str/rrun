@@ -80,7 +80,7 @@ fn select_and_execute() {
     let output = fzf.wait_with_output().expect("Failed to read stdout");
     let command = String::from_utf8_lossy(&output.stdout);
 
-    Command::new("i3-msg")
+    Command::new(_get_msg_program())
         .arg("exec")
         .arg(_get_shell() + " -ic")
         .arg(command.trim())
@@ -94,6 +94,44 @@ fn _get_content() -> String {
         read_from_persistent().unwrap()
     })
 }
+
+fn _get_msg_program() -> String {
+    if _using_i3() {
+        return String::from("i3-msg");
+    }
+
+    if _using_sway() {
+        return String::from("swaymsg");
+    }
+
+    if _using_hyprland() {
+        return String::from("hyprctl dispatch --");
+    }
+
+    panic!("No supported window manager detected");
+}
+
+fn _using_i3() -> bool {
+    match std::env::var_os("I3SOCK") {
+        Some(_val) => true,
+        None => false,
+    }
+}
+
+fn _using_sway() -> bool {
+    match std::env::var_os("SWAYSOCK") {
+        Some(_val) => true,
+        None => false,
+    }
+}
+
+fn _using_hyprland() -> bool {
+    match std::env::var_os("HYPRLAND_INSTANCE_SIGNATURE") {
+        Some(_val) => true,
+        None => false,
+    }
+}
+
 fn _get_shell() -> String {
     match std::env::var_os("SHELL") {
         Some(val) => val.into_string().unwrap(),
