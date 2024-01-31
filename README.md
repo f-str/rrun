@@ -4,7 +4,7 @@
 
 # RRun
 
-`rrun` is a resource-friendly application launcher for the [i3wm](https://i3wm.org/), written in pure Rust. 
+`rrun` is a resource-friendly application launcher for the [i3wm](https://i3wm.org/), [sway](https://swaywm.org/) and [Hyprland](https://hyprland.org/), written in pure Rust. 
 It provides a simple way to start applications directly from the command line.
 
 ## Installation
@@ -15,9 +15,9 @@ _WIP_
 
 Every time you install a new application, you need to execute `rrun generate` to update the list of available commands.
 
-### i3wm
+### i3wm / sway
 
-Just add the following line to your i3 config file:
+Just add the following line to your config file:
 
 ```
 # Start rrun when pressing superkey + d
@@ -26,6 +26,10 @@ bindsym $mod+d exec <your-prefered-terminal e.g. kitty> --class 'launcher' rrun
 # Set rrun window to floating and center it
 for_window [class="^launcher$"] floating enable, border none, resize set width 25 ppt height 20 ppt, move position center
 ```
+
+### Hyprland
+_WIP_
+
 
 ## CLI
 
