@@ -1,12 +1,11 @@
 [package]
 name = "rrun"
 version = "1.0.0"
-description = "A CLI application launcher for i3wm and sway written in Rust."
+description = "A CLI application and command launcher written in Rust. Supports I3wm, Sway, and Hyprland."
 authors = ["Florian Straubinger <github@f-str.de>"]
 repository = "https://github.com/f-str/rrun"
 homepage = "https://github.com/f-str/rrun"
 readme = "README.md"
-license = "MIT"
 license-file = "LICENSE"
 keywords = ["cli", "launcher", "i3", "application-launcher"]
 categories = ["command-line-utilities"]
@@ -18,3 +17,5 @@ optdepends = ["ripgrep", "fzf"]
 
 [dependencies]
 clap = { version = "4.5.20", features = ["derive"] }
+fzf-wrapped = "0.1.4"
+
