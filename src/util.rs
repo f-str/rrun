@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::Write;
 use std::path::Path;
@@ -20,6 +20,26 @@ pub fn write_to_file(path: &str, content: &str) -> io::Result<()> {
         },
         Err(err) => Err(err),
     }
+}
+
+pub fn append_to_file(path: &str, content: &String) -> io::Result<()> {
+    let binding = expand_path(path.to_string());
+    let path = Path::new(binding.as_str());
+    if !path.exists() {
+        std::fs::create_dir_all(path.parent().unwrap())?;
+        std::fs::File::create(path)?;
+    }
+    match OpenOptions::new().append(true).open(path) {
+        Ok(mut file) => match file.write_all(content.as_bytes()) {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err),
+        },
+        Err(err) => Err(err),
+    }
+}
+
+pub fn does_file_exist(path: &str) -> bool {
+    Path::new(&expand_path(path.to_string())).exists()
 }
 
 pub fn expand_path(path: String) -> String {

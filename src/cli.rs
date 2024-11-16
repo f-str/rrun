@@ -1,7 +1,10 @@
-use crate::persistent::{read_from_persistent, write_to_persistent};
+use std::io;
+
 use clap::{Parser, Subcommand};
-use std::io::Write;
-use std::process::{Command, Stdio};
+
+use crate::command_service::{
+    add_command, delete_command, edit_command, edit_name, exec, select_and_execute, statistics,
+};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -10,131 +13,69 @@ struct Cli {
     command: Option<Commands>,
 }
 
-#[derive(Subcommand)]
+#[derive(Clone, Debug, Subcommand)]
 enum Commands {
-    /// List all runnable commands
-    List,
+    // List all runnable commands
+    // List,
 
-    /// Generates the list of commands
-    Generate,
+    // Generates the list of commands
+    // Generate,
+    /// Adds a new command with a optional name to the long term memory.
+    AddCommand {
+        /// The name of the new command to add. If no name is provided the command is also used as
+        /// its name.
+        #[clap(long, short = 'n')]
+        name: Option<String>,
+        /// The command to execute. If prefixed with '#', the command is executed in the configured
+        /// terminal.
+        #[clap(long, short = 'c')]
+        command: String,
+    },
+
+    /// Edit the name of the given name. If no name is supplied you can choose from a fzf list of
+    /// all available names
+    EditName {
+        // Name of the entry in the long term memory, which should be changed.
+        name: Option<String>,
+    },
+
+    /// Edit the command of the given name. If no name is supplied you can choose from a fzf list of
+    /// all available names.
+    EditCommand {
+        /// Name of the entry in the long term memory, which command should be edited.
+        name: Option<String>,
+    },
+
+    /// Delete the entry with the given name from the long term memory. If no name is supplied you
+    /// can choose from a fzf list of all available names.
+    DeleteCommand {
+        /// Name of the entry in the long term memory, which should be deleted.
+        name: Option<String>,
+    },
+
+    /// Prints the usage statistics about the usage of the differnt commands.
+    Statistics,
+
+    /// Executes given commands, and adds them to the long term memory.
+    Exec {
+        /// The named command to execute. It is executed in the default shell.
+        /// If the command behind the name is prefixed with '#' a new terminal is spawend executing the command.
+        name: String,
+    },
 }
 
-pub fn parse_arguments() {
+pub fn parse_arguments() -> io::Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::List) => list(),
-        Some(Commands::Generate) => generate(),
-        None => select_and_execute(),
-    }
-}
-
-fn list() {
-    let content = _get_content();
-    println!("{}", content);
-}
-
-fn generate() {
-    println!("Generating...");
-    let compgen = Command::new(_get_shell())
-        .arg("-ic")
-        .arg("compgen -c -a")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute compgen");
-    let filter = Command::new("rg")
-        .arg("-x")
-        .arg("^[a-zA-Z]+\\S*$")
-        .stdin(compgen.stdout.unwrap())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute rg");
-    let sort = Command::new("sort")
-        .arg("-u")
-        .stdin(filter.stdout.unwrap())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute sort");
-    let output = sort.wait_with_output().unwrap();
-    let content = String::from_utf8(output.stdout).unwrap();
-    write_to_persistent(content.as_str()).unwrap();
-    println!("Done");
-}
-
-fn select_and_execute() {
-    let content = _get_content();
-    let mut fzf = Command::new("fzf")
-        .arg("--info=hidden")
-        .arg("--border")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute fzf");
-
-    let mut stdin = fzf.stdin.take().expect("Failed to open stdin");
-    std::thread::spawn(move || {
-        stdin
-            .write_all(content.as_bytes())
-            .expect("Failed to write to stdin");
-    });
-    let output = fzf.wait_with_output().expect("Failed to read stdout");
-    let command = String::from_utf8_lossy(&output.stdout);
-
-    Command::new(_get_msg_program())
-        .arg("exec")
-        .arg(_get_shell() + " -ic")
-        .arg(command.trim())
-        .output()
-        .expect("Failed to execute i3-msg");
-}
-
-fn _get_content() -> String {
-    read_from_persistent().unwrap_or_else(|_| {
-        generate();
-        read_from_persistent().unwrap()
-    })
-}
-
-fn _get_msg_program() -> String {
-    if _using_i3() {
-        return String::from("i3-msg");
+        Some(Commands::AddCommand { name, command }) => add_command(name, command)?,
+        Some(Commands::EditName { name }) => edit_name(name)?,
+        Some(Commands::EditCommand { name }) => edit_command(name)?,
+        Some(Commands::DeleteCommand { name }) => delete_command(name)?,
+        Some(Commands::Statistics) => statistics()?,
+        Some(Commands::Exec { name }) => exec(name)?,
+        None => select_and_execute()?,
     }
 
-    if _using_sway() {
-        return String::from("swaymsg");
-    }
-
-    if _using_hyprland() {
-        return String::from("hyprctl dispatch --");
-    }
-
-    panic!("No supported window manager detected");
-}
-
-fn _using_i3() -> bool {
-    match std::env::var_os("I3SOCK") {
-        Some(_val) => true,
-        None => false,
-    }
-}
-
-fn _using_sway() -> bool {
-    match std::env::var_os("SWAYSOCK") {
-        Some(_val) => true,
-        None => false,
-    }
-}
-
-fn _using_hyprland() -> bool {
-    match std::env::var_os("HYPRLAND_INSTANCE_SIGNATURE") {
-        Some(_val) => true,
-        None => false,
-    }
-}
-
-fn _get_shell() -> String {
-    match std::env::var_os("SHELL") {
-        Some(val) => val.into_string().unwrap(),
-        None => panic!("SHELL is not set"),
-    }
+    Ok(())
 }
