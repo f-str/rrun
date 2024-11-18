@@ -7,6 +7,7 @@ repository = "https://github.com/f-str/rrun"
 homepage = "https://github.com/f-str/rrun"
 readme = "README.md"
 license-file = "LICENSE"
+license="MIT"
 keywords = ["cli", "launcher", "i3", "application-launcher"]
 categories = ["command-line-utilities"]
 edition = "2021"
