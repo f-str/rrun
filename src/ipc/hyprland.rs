@@ -32,7 +32,7 @@ impl IPCHandler for HyprlandIPCHandler {
         let sock1_path = path.join(".socket.sock");
 
         let mut sock1_sock = UnixStream::connect(&sock1_path)?;
-        let cmd = &format!("/dispatch -- exec {command}");
+        let cmd = &format!("/dispatch exec {}", command);
         sock1_sock.write_all(cmd.as_bytes())?;
         sock1_sock.flush()
     }
