@@ -39,7 +39,22 @@ for_window [class="^launcher$"] floating enable, border none, resize set width 2
 ```
 
 ### Hyprland
-_WIP_
+
+Just add the following lines to you hyprland config file:
+
+- For executing `rrun`:
+```
+$launcher = <your-prefered-terminal e.g. kitty> -class 'launcher' rrun
+```
+(Note, that your terminal may requiere more arguments in order to start directly with the program)
+
+- Window rules in order to make `rrun` pretty:
+```
+windowrulev2 = float, class:^(launcher)$  # Set the launcher window to float
+windowrulev2 = size 700ppt 250ppt, class:^(launcher)$  # Set the size (you may adapt it to your liking)
+windowrulev2 = center, class:^(launcher)$  # Center it to your current monitor
+windowrulev2 = stayfocused, class:^(launcher)$  # Force the focus on the launcher window
+```
 
 
 ## CLI
