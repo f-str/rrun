@@ -44,7 +44,7 @@ Just add the following lines to you hyprland config file:
 
 - For executing `rrun`:
 ```
-$launcher = <your-prefered-terminal e.g. kitty> -class 'launcher' rrun
+$launcher = <your-prefered-terminal e.g. kitty> --class 'launcher' rrun
 ```
 (Note, that your terminal may requiere more arguments in order to start directly with the program)
 
