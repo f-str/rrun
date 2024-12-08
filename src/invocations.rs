@@ -2,7 +2,7 @@ use std::{collections::HashMap, fs, io};
 
 use crate::{
     long_term_memory::LongTermMemory,
-    util::{append_to_file, does_file_exist, read_from_file},
+    util::{append_to_file, does_file_exist, expand_path, read_from_file},
 };
 
 const INVOCATION_FILE: &str = "~/.rrun/invocations";
@@ -13,8 +13,7 @@ pub fn add_new_invocation(name: &String) -> io::Result<()> {
 }
 
 pub fn reset_invocations() -> io::Result<()> {
-    fs::remove_file(INVOCATION_FILE)?;
-    Ok(())
+    fs::remove_file(expand_path(INVOCATION_FILE.to_string()))
 }
 
 pub fn set_ordered_flag() -> io::Result<()> {
