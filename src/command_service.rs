@@ -43,7 +43,9 @@ pub fn add_command(name: &Option<String>, command: &String) -> io::Result<()> {
 pub fn edit_name(name: &Option<String>) -> io::Result<()> {
     let mut ltm = LongTermMemory::load()?;
 
-    let name = name.clone().unwrap_or(fzf_select(ltm.names.clone()));
+    let name = name
+        .clone()
+        .unwrap_or_else(|| fzf_select(ltm.names.clone()));
 
     println!("Rename the entry with the name '{}'", name);
 
@@ -60,10 +62,11 @@ pub fn edit_name(name: &Option<String>) -> io::Result<()> {
                 .unwrap();
 
             if !ltm.names.contains(&new_name) && new_name != name {
-                let entry = ltm
+                let mut entry = ltm
                     .memory
                     .remove(&name)
                     .unwrap_or_else(|| panic!("Could not find entry with name '{}'", name));
+                entry.name = new_name.clone();
                 ltm.memory.insert(new_name.clone(), entry);
                 ltm.names
                     .remove(ltm.names.iter().position(|n| n == &name).unwrap());
@@ -82,7 +85,9 @@ pub fn edit_name(name: &Option<String>) -> io::Result<()> {
 pub fn edit_command(name: &Option<String>) -> io::Result<()> {
     let mut ltm = LongTermMemory::load()?;
 
-    let name = name.clone().unwrap_or(fzf_select(ltm.names.clone()));
+    let name = name
+        .clone()
+        .unwrap_or_else(|| fzf_select(ltm.names.clone()));
 
     println!("Edit the command with the name '{}'", name);
 
@@ -107,7 +112,9 @@ pub fn edit_command(name: &Option<String>) -> io::Result<()> {
 pub fn delete_command(name: &Option<String>) -> io::Result<()> {
     let mut ltm = LongTermMemory::load()?;
 
-    let name = name.clone().unwrap_or(fzf_select(ltm.names.clone()));
+    let name = name
+        .clone()
+        .unwrap_or_else(|| fzf_select(ltm.names.clone()));
 
     if Confirm::with_theme(&ColorfulTheme::default())
         .with_prompt(format!(
