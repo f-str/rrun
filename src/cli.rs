@@ -35,7 +35,7 @@ enum Commands {
     /// Edit the name of the given name. If no name is supplied you can choose from a fzf list of
     /// all available names
     EditName {
-        // Name of the entry in the long term memory, which should be changed.
+        /// Name of the entry in the long term memory, which should be changed.
         name: Option<String>,
     },
 
