@@ -152,20 +152,21 @@ pub fn exec(name: &String) -> io::Result<()> {
 }
 
 fn exec_internal(name: &String, ltm: &mut LongTermMemory) -> io::Result<()> {
-    let cmd = if let Some(entry) = ltm.memory.get(name) {
+    let command = name;
+
+    let mut name = name.clone();
+    if name.starts_with(TERM_PREFIX) {
+        name = name
+            .strip_prefix(TERM_PREFIX)
+            .unwrap()
+            .trim_start()
+            .to_string();
+    }
+
+    let cmd = if let Some(entry) = ltm.memory.get(&name) {
         &entry.command
     } else {
-        let command = name;
-
-        let mut name = name.clone();
-        if name.starts_with(TERM_PREFIX) {
-            name = name
-                .strip_prefix(TERM_PREFIX)
-                .unwrap()
-                .trim_start()
-                .to_string();
-        }
-
+        // If not present alreay insert add
         ltm.names.push(name.clone());
         ltm.memory.insert(
             name.clone(),

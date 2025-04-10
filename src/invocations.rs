@@ -8,7 +8,7 @@ use crate::{
 const INVOCATION_FILE: &str = "~/.rrun/invocations";
 const FLAG_FILE: &str = "/tmp/rrun_ordered";
 
-pub fn add_new_invocation(name: &String) -> io::Result<()> {
+pub fn add_new_invocation(name: String) -> io::Result<()> {
     append_to_file(INVOCATION_FILE, &format!("{}\n", name).to_string())
 }
 
