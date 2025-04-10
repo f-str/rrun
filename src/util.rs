@@ -57,3 +57,19 @@ pub fn check_if_program_is_installed(program: &str) -> bool {
         .expect("Failed to execute command");
     output.status.success()
 }
+
+pub fn get_user_shell() -> io::Result<String> {
+    let passwd = read_from_file("/etc/passwd")?;
+    let username = whoami::username();
+    for line in passwd.lines() {
+        if line.starts_with(&username) {
+            let parts: Vec<&str> = line.split(":").collect();
+
+            return match parts.last() {
+                Some(p) => Ok(p.to_string()),
+                None => Ok("/bin/sh".to_string())
+            } 
+        }
+    }
+    Ok("/bin/sh".to_string())
+}
