@@ -67,8 +67,8 @@ pub fn get_user_shell() -> io::Result<String> {
 
             return match parts.last() {
                 Some(p) => Ok(p.to_string()),
-                None => Ok("/bin/sh".to_string())
-            } 
+                None => Ok("/bin/sh".to_string()),
+            };
         }
     }
     Ok("/bin/sh".to_string())
