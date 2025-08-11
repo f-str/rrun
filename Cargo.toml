@@ -21,4 +21,4 @@ clap = { version = "4.5.41", features = ["derive"] }
 fzf-wrapped = "0.1.4"
 dialoguer = { version = "0.11.0", features = ["editor", "fuzzy-select", "history", "completion", "password"] }
 console = "0.16.0"
-whoami = "1.6.0"
+whoami = "1.6.1"
