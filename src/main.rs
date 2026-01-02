@@ -8,6 +8,7 @@ mod invocations;
 mod ipc;
 mod long_term_memory;
 mod notification;
+mod terminals;
 mod util;
 
 fn main() -> io::Result<()> {

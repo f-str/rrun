@@ -11,9 +11,8 @@ use crate::invocations::{
 };
 use crate::ipc::ipc_execute;
 use crate::long_term_memory::{LongTermMemory, LongTermMemoryEntry};
-use crate::util::get_user_shell;
 
-const TERM_PREFIX: &str = "@";
+pub const TERM_PREFIX: &str = "@";
 
 pub fn add_command(name: &Option<String>, command: &String) -> io::Result<()> {
     let name = name.clone().unwrap_or(command.to_owned());
@@ -185,14 +184,7 @@ fn exec_internal(name: &String, ltm: &mut LongTermMemory) -> io::Result<()> {
     if cmd.starts_with(TERM_PREFIX) {
         let config = Config::load()?;
 
-        let shell = get_user_shell()?;
-
-        let cmd = &format!(
-            "{} {} -ic '{}'",
-            config.terminal,
-            shell,
-            cmd.strip_prefix(TERM_PREFIX).unwrap().trim_start()
-        );
+        let cmd = &config.terminal.format_cmd(cmd, &name);
 
         ipc_execute(cmd)?;
     } else {

@@ -1,18 +1,18 @@
-use std::io;
-
+use crate::terminals::Terminal;
 use crate::util::{does_file_exist, read_from_file, write_to_file};
+use std::io;
 
 const CONFIG_FILE: &str = "~/.config/rrun/config";
 
 // Maybe add fzf colors, ltm location, etc.
 pub struct Config {
-    pub terminal: String,
+    pub terminal: Terminal,
 }
 
 impl Config {
     pub fn new() -> Config {
         Config {
-            terminal: "kitty".to_string(),
+            terminal: Terminal::default(),
         }
     }
 
@@ -27,15 +27,15 @@ impl Config {
             let mut parts = line.split("=");
             let key = parts.next().unwrap();
             let value = parts.next().unwrap();
-            if key == "terminal" {
-                config.terminal = value.to_string()
+            if key == Terminal::config_key() {
+                config.terminal = Terminal::from_string(value).expect("Unknown terminal config.")
             }
         }
         Ok(config)
     }
 
     pub fn store(&self) -> io::Result<()> {
-        let content = format!("terminal={}\n", self.terminal);
+        let content = format!("{}={}\n", Terminal::config_key(), self.terminal);
         write_to_file(CONFIG_FILE, &content)
     }
 

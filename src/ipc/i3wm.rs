@@ -47,7 +47,6 @@ impl IPCHandler for I3WMIPCHandler {
         let mut header_buf = [0_u8; 14];
         sock.read_exact(&mut header_buf)?;
 
-
         // Just here for the future, when we want to react to the repsonse from the socket
         // let magic_data: [u8; 6] = header_buf[..6].try_into().unwrap();
         //let payload_len_buf: [u8; 4] = header_buf[2..6].try_into().unwrap();
